@@ -7,7 +7,7 @@ import BlankCard from '../../../shared/BlankCard';
 const Licenses = [
     {
         id: 1,
-        type: 'Single Use',
+        type: 'Paket 1',
         isPopular: false,
         typeText: 'Use for single end product which end users can’t be charged for.',
         price: '49',
@@ -20,7 +20,7 @@ const Licenses = [
     },
     {
         id: 2,
-        type: 'Multiple Use',
+        type: 'Paket 2',
         isPopular: false,
         typeText: 'Use for unlimited end products end users can’t be charged for.',
         price: '89',
@@ -33,7 +33,7 @@ const Licenses = [
     },
     {
         id: 3,
-        type: 'Extended Use',
+        type: 'Paket 3',
         isPopular: true,
         typeText: 'Use for single end product which end users can be charged for.',
         price: '299',

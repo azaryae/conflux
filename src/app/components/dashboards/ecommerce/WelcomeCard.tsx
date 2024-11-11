@@ -61,7 +61,7 @@ const WelcomeCard = () => {
                     </span>
                   </Typography>
                   <Typography variant="subtitle1" whiteSpace="nowrap">
-                    Today’s Sales
+                    Total Token dimiliki
                   </Typography>
                 </Box>
                 <Box>

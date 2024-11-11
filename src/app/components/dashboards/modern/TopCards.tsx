@@ -5,40 +5,43 @@ import { Box, CardContent, Grid, Typography } from "@mui/material";
 const topcards = [
   {
     icon: '/images/svgs/icon-user-male.svg',
-    title: "Employees",
+    title: "About Me",
     digits: "96",
     bgcolor: "primary",
+    href: "",
   },
   {
     icon: '/images/svgs/icon-briefcase.svg',
-    title: "Clients",
+    title: "Token",
     digits: "3,650",
     bgcolor: "warning",
+    href: "",
   },
   {
     icon: '/images/svgs/icon-mailbox.svg',
-    title: "Projects",
+    title: "History",
     digits: "356",
     bgcolor: "secondary",
+    href: "",
   },
-  {
-    icon: '/images/svgs/icon-favorites.svg',
-    title: "Events",
-    digits: "696",
-    bgcolor: "error",
-  },
-  {
-    icon: '/images/svgs/icon-speech-bubble.svg',
-    title: "Payroll",
-    digits: "$96k",
-    bgcolor: "success",
-  },
-  {
-    icon: '/images/svgs/icon-connect.svg',
-    title: "Reports",
-    digits: "59",
-    bgcolor: "info",
-  },
+  // {
+  //   icon: '/images/svgs/icon-favorites.svg',
+  //   title: "Events",
+  //   digits: "696",
+  //   bgcolor: "error",
+  // },
+  // {
+  //   icon: '/images/svgs/icon-speech-bubble.svg',
+  //   title: "Payroll",
+  //   digits: "$96k",
+  //   bgcolor: "success",
+  // },
+  // {
+  //   icon: '/images/svgs/icon-connect.svg',
+  //   title: "Reports",
+  //   digits: "59",
+  //   bgcolor: "info",
+  // },
 ];
 
 const TopCards = () => {

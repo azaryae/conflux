@@ -28,7 +28,7 @@ const Pricing = () => {
                                     },
                                 }}
                             >
-                                111,476+ Trusted developers & many tech giants as well
+                                Beli Token lagi?
                             </Typography>
                         </Grid>
                     </Grid>

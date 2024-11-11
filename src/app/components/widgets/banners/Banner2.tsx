@@ -8,7 +8,7 @@ import NotificationCode from "./code/NotificationCode";
 
 const Banner2 = () => {
   return (
-    <ParentCard title="Notification" codeModel={<NotificationCode />}>
+    <ParentCard title="Profil" codeModel={<NotificationCode />}>
       <CardContent sx={{ p: "30px" }}>
         <Typography
           variant="subtitle1"

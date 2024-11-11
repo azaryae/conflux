@@ -13,7 +13,7 @@ import Transection from "./code/TransectionCode";
 
 const Banner1 = () => {
   return (
-    <ParentCard title="Transction" codeModel={<Transection />}>
+    <ParentCard title="History" codeModel={<Transection />}>
       <Card
         elevation={0}
         sx={{
