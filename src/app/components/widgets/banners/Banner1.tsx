@@ -35,11 +35,10 @@ const Banner1 = () => {
                 }}
               >
                 <Typography variant="h5">
-                  Track your every Transaction Easily
+                  Riwayat Latihan Wawancara
                 </Typography>
                 <Typography variant="subtitle1" color="textSecondary" my={2}>
-                  Track and record your every income and expence easily to
-                  control your balance
+                  Lihat riwayat keseluruhan latihan wawancara anda disini!
                 </Typography>
                 <Button variant="contained" color="secondary">
                   Download

@@ -9,11 +9,15 @@ import {
   Grid,
   Divider,
   Stack,
+  Button,
 } from "@mui/material";
 import { IconArrowUpRight } from "@tabler/icons-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation"; // Pastikan impor yang benar
 
 const WelcomeCard = () => {
+  const router = useRouter(); // Definisikan router di sini
+
   return (
     <Card
       elevation={0}
@@ -44,36 +48,30 @@ const WelcomeCard = () => {
                   sx={{ width: 40, height: 40 }}
                 />
                 <Typography variant="h5" whiteSpace="nowrap">
-                  Welcome back Mathew Anderson!
+                  Welcome back Azarya
                 </Typography>
               </Box>
 
-              <Stack mt={8}
+              <Stack
+                mt={8}
                 spacing={2}
                 direction="row"
                 divider={<Divider orientation="vertical" flexItem />}
               >
                 <Box>
                   <Typography variant="h2" whiteSpace="nowrap">
-                    $2,340{" "}
-                    <span>
-                      <IconArrowUpRight width={18} color="#39B69A" />
-                    </span>
+                    4{" "}
                   </Typography>
                   <Typography variant="subtitle1" whiteSpace="nowrap">
                     Total Token dimiliki
                   </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="h2" whiteSpace="nowrap">
-                    35%
-                    <span>
-                      <IconArrowUpRight width={18} color="#39B69A" />
-                    </span>
-                  </Typography>
-                  <Typography variant="subtitle1" whiteSpace="nowrap">
-                    Performance
-                  </Typography>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => router.push("/token")}
+                  >
+                    Lihat
+                  </Button>
                 </Box>
               </Stack>
             </Box>

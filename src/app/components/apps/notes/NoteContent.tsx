@@ -1,130 +1,156 @@
-import React from 'react';
-import { useSelector, useDispatch } from '@/store/hooks';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Fab from '@mui/material/Fab';
-import FormLabel from '@mui/material/FormLabel';
-import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
-import { IconCheck, IconMenu2 } from '@tabler/icons-react';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, IconButton, Divider } from '@mui/material';
+import MicIcon from '@mui/icons-material/Mic';
+import StopIcon from '@mui/icons-material/Stop';
 
-import { UpdateNote } from '@/store/apps/notes/NotesSlice';
-import AddNotes from './AddNotes';
-import { NotesType } from '../../../(DashboardLayout)/types/apps/notes';
-
-interface colorsType {
-  lineColor: string;
-  disp: string | any;
-  id: number;
-}
-
-interface Props {
-  toggleNoteSidebar: (event: React.MouseEvent<HTMLElement>) => void,
-}
-
-const NoteContent = ({ toggleNoteSidebar }: Props) => {
-  const notelength: any = useSelector(
-    (state) => state.notesReducer.notes.length-1,
-  );
-  const noteDetails: NotesType = useSelector(
-    (state) => state.notesReducer.notes[state.notesReducer.notesContent>notelength ?  0 : state.notesReducer.notesContent],
-  );
-  
-  const theme = useTheme();
-
-  const dispatch = useDispatch();
-
-  const colorvariation: colorsType[] = [
-    {
-      id: 1,
-      lineColor: theme.palette.warning.main,
-      disp: 'warning',
-    },
-    {
-      id: 2,
-      lineColor: theme.palette.info.main,
-      disp: 'info',
-    },
-    {
-      id: 3,
-      lineColor: theme.palette.error.main,
-      disp: 'error',
-    },
-    {
-      id: 4,
-      lineColor: theme.palette.success.main,
-      disp: 'success',
-    },
-    {
-      id: 5,
-      lineColor: theme.palette.primary.main,
-      disp: 'primary',
-    },
+const InterviewChat = () => {
+  const questions = [
+    'Selamat datang di sesi wawancara. Bagaimana cara Anda mengatasi stres dalam pekerjaan?',
+    'Apa motivasi utama Anda dalam melamar pekerjaan ini?',
+    'Bagaimana Anda menghadapi tantangan dalam bekerja secara tim?',
+    'Apa yang Anda lakukan untuk mengembangkan keterampilan Anda?',
+    'Apa yang Anda lakukan ketika Anda tidak setuju dengan pendapat rekan kerja Anda?',
+    'Apa yang Anda lakukan ketika Anda tidak setuju dengan keputusan atasan Anda?',
+    'Bagaimana Anda menyeimbangkan pekerjaan dan kehidupan pribadi Anda?',
+    'Coba ceritakan tentang proyek terbaik yang pernah Anda kerjakan.',
+    'Apa yang Anda lakukan ketika Anda merasa tidak puas dengan pekerjaan Anda?',
+    'Jika Anda diterima di perusahaan ini, apa yang akan Anda lakukan dalam 30 hari pertama Anda?',
   ];
 
+  const [messages, setMessages] = useState([{ sender: 'ai', text: questions[0] }]);
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [recognition, setRecognition] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  useEffect(() => {
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window) {
+      const speechRecognition = new window.webkitSpeechRecognition();
+      speechRecognition.continuous = false;
+      speechRecognition.interimResults = false;
+      speechRecognition.lang = 'id-ID'; // Set language to Indonesian
+
+      speechRecognition.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        setTranscript(text);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { sender: 'user', text },
+        ]);
+
+        // Display the next question after a user response
+        setTimeout(() => {
+          setCurrentQuestionIndex((prevIndex) => {
+            const nextIndex = prevIndex + 1;
+            if (nextIndex < questions.length) {
+              const nextQuestion = questions[nextIndex];
+              setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: 'ai', text: nextQuestion },
+              ]);
+              // Synthesize the next question
+              speakText(nextQuestion);
+            }
+            return nextIndex;
+          });
+        }, 1000); // Delay before the next question
+      };
+
+      speechRecognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      setRecognition(speechRecognition);
+    } else {
+      alert('Web Speech API is not supported in this browser.');
+    }
+
+    // Speak the first question when component mounts
+    speakText(questions[0]);
+  }, []);
+
+  const handleRecording = () => {
+    if (isRecording) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+    setIsRecording(!isRecording);
+  };
+
+  // Speech synthesis function
+  const speakText = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'id-ID'; // Set language to Indonesian
+    window.speechSynthesis.speak(utterance);
+  };
+
   return (
-    <Box sx={{ height: { lg: 'calc(100vh - 250px)', sm: '100vh' }, maxHeight: '700px' }}>
-      {/* ------------------------------------------- */}
-      {/* Header Part */}
-      {/* ------------------------------------------- */}
-      <Box display="flex" alignItems="center" justifyContent="space-between" p={2}>
-        <IconButton onClick={toggleNoteSidebar}>
-          <IconMenu2 stroke={1.5} />
-        </IconButton>
-        <AddNotes colors={colorvariation} />
-      </Box>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '80vh',
+        maxWidth: '100wh',
+        margin: 'auto',
+        p: 2,
+        border: '1px solid #e0e0e0',
+        borderRadius: '8px',
+      }}
+    >
+      <Typography variant="h6" align="center" gutterBottom>
+        Latihan Wawancara
+      </Typography>
       <Divider />
-      {/* ------------------------------------------- */}
-      {/* Edit notes */}
-      {/* ------------------------------------------- */}
-      {noteDetails ? (
-        <Box p={3}>
-          <FormLabel htmlFor="outlined-multiline-static">
-            <Typography variant="h6" mb={2} fontWeight={600} color="text.primary">
-              Edit Note
-            </Typography>
-          </FormLabel>
 
-          <TextField
-            id="outlined-multiline-static"
-            placeholder="Edit Note"
-            multiline
-            fullWidth
-            rows={5}
-            variant="outlined"
-            value={noteDetails.title}
-            onChange={(e) => dispatch(UpdateNote(noteDetails.id, 'title', e.target.value))}
-          />
-          <br />
-          <Typography variant="h6" mt={3} mb={2} fontWeight={600}>
-            Change Note Color
-          </Typography>
-
-          {colorvariation.map((color1) => (
-            <Fab
+      {/* Chat Messages Section */}
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          mt: 2,
+          mb: 2,
+        }}
+      >
+        {messages.map((message, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: 'flex',
+              justifyContent: message.sender === 'ai' ? 'flex-start' : 'flex-end',
+              mb: 2,
+            }}
+          >
+            <Box
               sx={{
-                marginRight: '3px',
-                boxShadow: 'none',
-                transition: '0.1s ease-in',
-                scale: noteDetails.color === color1.disp ? '0.9' : '0.7',
+                maxWidth: '70%',
+                p: 1.5,
+                borderRadius: 2,
+                backgroundColor: message.sender === 'ai' ? '#f0f0f0' : '#1976d2',
+                color: message.sender === 'ai' ? 'black' : 'white',
+                textAlign: message.sender === 'ai' ? 'left' : 'right',
               }}
-              size="small"
-              key={color1.id}
-              color={color1?.disp}
-              onClick={() => dispatch(UpdateNote(noteDetails.id, 'color', color1.disp))}
             >
-              {noteDetails.color === color1.disp ? <IconCheck width="16" /> : ''}
-            </Fab>
-          ))}
-        </Box>
-      ) : (
-        <Box sx={{ textAlign: 'center', fontSize: '24px', mt: 2 }}>Select a Note</Box>
-      )}
+              <Typography>{message.text}</Typography>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      {/* Voice Recording Button */}
+      <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
+        <IconButton color="primary" onClick={handleRecording}>
+          {isRecording ? <StopIcon /> : <MicIcon />}
+        </IconButton>
+        {isRecording && (
+          <Typography variant="caption" color="textSecondary" ml={1}>
+            Mendengarkan...
+          </Typography>
+        )}
+      </Box>
     </Box>
   );
 };
 
-
-export default NoteContent;
+export default InterviewChat;

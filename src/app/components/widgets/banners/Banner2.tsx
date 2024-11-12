@@ -8,7 +8,7 @@ import NotificationCode from "./code/NotificationCode";
 
 const Banner2 = () => {
   return (
-    <ParentCard title="Profil" codeModel={<NotificationCode />}>
+    <ParentCard title="Data Diri" codeModel={<NotificationCode />}>
       <CardContent sx={{ p: "30px" }}>
         <Typography
           variant="subtitle1"
@@ -17,25 +17,31 @@ const Banner2 = () => {
           textTransform="uppercase"
           color="textSecondary"
         >
-          Level Up
+          Data Pribadi
         </Typography>
+        
         <Box textAlign="center">
-          <Image
-            src={"/images/backgrounds/gold.png"}
-            width={150}
-            height={150}
-            alt="star"
-            style={{ width: "150px" }}
-          />
-
-          <Typography variant="h5">You reach all Notifications</Typography>
-          <Typography variant="subtitle1" color="textSecondary" mt={1} mb={2}>
-            Congratulations,
-            <br /> Tap to continue next task.
-          </Typography>
+          <Typography variant="h5">Azarya Aditya Krisna Moeljono</Typography>
+          <Box textAlign="left" mt={2}>
+            <Typography variant="subtitle1" color="textSecondary" mb={1}>
+              Umur: 20
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary" mb={1}>
+              Jenis Kelamin: Laki-laki
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary" mb={1}>
+              Agama: Kristen Protestan
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary" mb={1}>
+              Pekerjaan: Mahasiswa
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary" mb={2}>
+              Email: azaryamoeljono12@gmail.com
+            </Typography>
+          </Box>
 
           <Button color="primary" variant="contained" size="large">
-            Yes, Got it!
+            Update Data
           </Button>
         </Box>
       </CardContent>

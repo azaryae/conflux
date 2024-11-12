@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Box, Grid, Typography, Chip, CardContent, Divider, Stack, Button } from '@mui/material';
+import { Box, Grid, Typography, Chip, CardContent, Divider, Button } from '@mui/material';
 import Image from 'next/image';
 import BlankCard from '../../../shared/BlankCard';
 
@@ -9,66 +9,68 @@ const Licenses = [
         id: 1,
         type: 'Paket 1',
         isPopular: false,
-        typeText: 'Use for single end product which end users can’t be charged for.',
-        price: '49',
-        fullSourceCode: true,
+        typeText: '1 token untuk 1 sesi wawancara.',
+        price: '15.000',
+        fullSourceCode: false,
         isDoc: true,
         isSass: false,
         isSingleProject: true,
         isSupport: true,
-        isUpdate: true
+        isUpdate: false
     },
     {
         id: 2,
         type: 'Paket 2',
         isPopular: false,
-        typeText: 'Use for unlimited end products end users can’t be charged for.',
-        price: '89',
-        fullSourceCode: true,
+        typeText: '5 token untuk 5 sesi wawancara.',
+        price: '75.000',
+        fullSourceCode: false,
         isDoc: true,
         isSass: false,
-        isSingleProject: false,
+        isSingleProject: true,
         isSupport: true,
-        isUpdate: true
+        isUpdate: false
     },
     {
         id: 3,
         type: 'Paket 3',
         isPopular: true,
-        typeText: 'Use for single end product which end users can be charged for.',
-        price: '299',
-        fullSourceCode: true,
+        typeText: '10 token untuk 10 sesi wawancara.',
+        price: '150.000',
+        fullSourceCode: false,
         isDoc: true,
-        isSass: true,
+        isSass: false,
         isSingleProject: true,
         isSupport: true,
-        isUpdate: true
+        isUpdate: false
     },
     {
         id: 4,
-        type: 'Unlimited Use',
+        type: 'Paket 4',
         isPopular: false,
-        typeText: 'Use in unlimited end products end users can be charged for.',
-        price: '499',
-        fullSourceCode: true,
+        typeText: '20 token untuk 20 sesi wawancara.',
+        price: '300.000',
+        fullSourceCode: false,
         isDoc: true,
-        isSass: true,
-        isSingleProject: false,
+        isSass: false,
+        isSingleProject: true,
         isSupport: true,
-        isUpdate: true
+        isUpdate: false
     },
-]
+];
 
 const PricingCard = () => {
     return (
         <>
-            <Grid container spacing={3}>
+            <Grid container spacing={2}>
                 {Licenses.map((license, i) => (
-                    <Grid item xs={12} lg={3} sm={6} key={i}>
+                    <Grid item xs={12} sm={6} md={3} key={i}>
                         <BlankCard>
-                            <CardContent sx={{ p: '32px' }}>
-                                <Box display="flex" alignItems="center" mb={2}>
-                                    <Typography variant="h4" fontSize="20px" fontWeight={600}>{license.type}</Typography>
+                            <CardContent sx={{ p: '16px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+                                <Box display="flex" alignItems="center" mb={1}>
+                                    <Typography variant="h6" fontSize="16px" fontWeight={600} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {license.type}
+                                    </Typography>
                                     {license.isPopular ?
                                         <Chip label="Popular" size="small" sx={{
                                             ml: '6px',
@@ -77,78 +79,22 @@ const PricingCard = () => {
                                             backgroundColor: 'rgba(93, 135, 255, 0.15)'
                                         }} />
                                         : null}
-
                                 </Box>
 
-                                <Typography fontSize="13px" mb={4}>{license.typeText}</Typography>
+                                <Typography fontSize="12px" mb={2} sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {license.typeText}
+                                </Typography>
                                 <Divider />
-                                <Stack mt={4} direction="row" gap="8px" alignItems="end">
-                                    <Typography variant='h4' fontSize="40px" fontWeight={700}>${license.price}</Typography>
-                                    <Typography variant='body2' fontSize="14px">/ one time pay</Typography>
-                                </Stack>
-                                <Stack my={4} gap="12px">
-                                    <Box display="flex" alignItems="center" gap="8px">
-                                        {license.fullSourceCode ?
-                                            <Image src="/images/frontend-pages/icons/icon-check.svg" alt="circle" width={20} height={20} />
-                                            :
-                                            <Image src="/images/frontend-pages/icons/icon-close.svg" alt="circle" width={20} height={20} />
-                                        }
-                                        <Typography fontSize="14px" fontWeight={500}>Full source code</Typography>
-
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="8px">
-                                        {license.isDoc ?
-                                            <Image src="/images/frontend-pages/icons/icon-check.svg" alt="circle" width={20} height={20} />
-                                            :
-                                            <Image src="/images/frontend-pages/icons/icon-close.svg" alt="circle" width={20} height={20} />
-                                        }
-                                        <Typography fontSize="14px" fontWeight={500}>Documentation</Typography>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="8px">
-                                        {license.isSass ?
-                                            <Image src="/images/frontend-pages/icons/icon-check.svg" alt="circle" width={20} height={20} />
-                                            :
-                                            <Image src="/images/frontend-pages/icons/icon-close.svg" alt="circle" width={20} height={20} />
-                                        }
-                                        <Typography fontSize="14px" sx={{
-                                            color: `${license.isSass ? 'text.primary' : '#99AABA'}`,
-                                            fontWeight: `${license.isSass ? '500' : '400'}`,
-                                        }}>Use in SaaS app</Typography>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="8px">
-                                        {license.isSingleProject ?
-                                            <Image src="/images/frontend-pages/icons/icon-check.svg" alt="circle" width={20} height={20} />
-                                            :
-                                            <Image src="/images/frontend-pages/icons/icon-check.svg" alt="circle" width={20} height={20} />
-                                        }
-                                        <Typography fontSize="14px" whiteSpace="nowrap" gap="2px" fontWeight={500} display="flex">
-                                            <Box fontWeight={700} component="span" whiteSpace="nowrap"> {license.isSingleProject ? "One" : "Unlimited"} </Box>
-                                            Project
-                                        </Typography>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="8px">
-                                        {license.isSupport ?
-                                            <Image src="/images/frontend-pages/icons/icon-check.svg" alt="circle" width={20} height={20} />
-                                            :
-                                            <Image src="/images/frontend-pages/icons/icon-close.svg" alt="circle" width={20} height={20} />
-                                        }
-                                        <Typography fontSize="14px" whiteSpace="nowrap" gap="2px" fontWeight={500} display="flex"><Box fontWeight={700} component="span" whiteSpace="nowrap">One Year</Box> Technical Support</Typography>
-                                    </Box>
-                                    <Box display="flex" alignItems="center" gap="8px">
-                                        {license.isUpdate ?
-                                            <Image src="/images/frontend-pages/icons/icon-check.svg" alt="circle" width={20} height={20} />
-                                            :
-                                            <Image src="/images/frontend-pages/icons/icon-close.svg" alt="circle" width={20} height={20} />
-                                        }
-                                        <Typography fontSize="14px" whiteSpace="nowrap" gap="2px" fontWeight={500} display="flex"><Box fontWeight={700} component="span" whiteSpace="nowrap">One Year</Box> Free Updates</Typography>
-                                    </Box>
-                                </Stack>
-                                <Button fullWidth variant="contained" size="large">Purchase Now</Button>
+                                <Box mt={2} mb={2} display="flex" direction="row" gap="8px" alignItems="baseline">
+                                    <Typography variant='h5' fontSize="24px" fontWeight={700}>Rp{license.price}</Typography>
+                                    <Typography variant='body2' fontSize="12px">/ sekali pembayaran</Typography>
+                                </Box>
+  
+                                <Button fullWidth variant="contained" size="small">Purchase Now</Button>
                             </CardContent>
                         </BlankCard>
                     </Grid>
                 ))}
-
             </Grid>
         </>
     );
