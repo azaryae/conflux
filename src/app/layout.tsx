@@ -5,8 +5,8 @@ import "./global.css";
 
 
 export const metadata = {
-  title: "Modernize Main Demo",
-  description: "Modernize Main kit",
+  title: "Conflux.AI Main Demo",
+  description: "Conflux.AI Main kit",
 };
 
 export default function RootLayout({

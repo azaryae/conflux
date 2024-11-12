@@ -60,7 +60,7 @@ export default function Login2() {
                       variant="h6"
                       fontWeight="500"
                     >
-                      New to Modernize?
+                      New to Conflux.AI?
                     </Typography>
                     <Typography
                       component={Link}
