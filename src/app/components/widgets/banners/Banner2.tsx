@@ -21,22 +21,22 @@ const Banner2 = () => {
         </Typography>
         
         <Box textAlign="center">
-          <Typography variant="h5">Azarya Aditya Krisna Moeljono</Typography>
+          <Typography variant="h5">Pengguna</Typography>
           <Box textAlign="left" mt={2}>
             <Typography variant="subtitle1" color="textSecondary" mb={1}>
-              Umur: 20
+              Umur:
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" mb={1}>
-              Jenis Kelamin: Laki-laki
+              Jenis Kelamin: 
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" mb={1}>
-              Agama: Kristen Protestan
+              Agama: 
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" mb={1}>
-              Pekerjaan: Mahasiswa
+              Pekerjaan: 
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" mb={2}>
-              Email: azaryamoeljono12@gmail.com
+              Email: 
             </Typography>
           </Box>
 

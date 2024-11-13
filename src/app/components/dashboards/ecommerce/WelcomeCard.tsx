@@ -48,7 +48,7 @@ const WelcomeCard = () => {
                   sx={{ width: 40, height: 40 }}
                 />
                 <Typography variant="h5" whiteSpace="nowrap">
-                  Welcome back Azarya
+                  Selamat datang, Pengguna
                 </Typography>
               </Box>
 
@@ -60,7 +60,7 @@ const WelcomeCard = () => {
               >
                 <Box>
                   <Typography variant="h2" whiteSpace="nowrap">
-                    4{" "}
+                    100{" "}
                   </Typography>
                   <Typography variant="subtitle1" whiteSpace="nowrap">
                     Total Token dimiliki

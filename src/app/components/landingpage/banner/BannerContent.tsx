@@ -36,7 +36,7 @@ const BannerContent = () => {
           <Typography color={'secondary'}>
             <IconRocket size={'21'} />
           </Typography>{' '}
-          Kick start your project with
+            Smarter Interviews, Better Careers
         </Typography>
 
         <Typography
@@ -51,11 +51,11 @@ const BannerContent = () => {
             },
           }}
         >
-          Most powerful &{' '}
+          Latihan Interview Bersama{' '}
           <Typography component={'span'} variant="inherit" color={'primary'}>
-            Developer friendly
-          </Typography>{' '}
-          NextJs dashboard
+            Conflux.AI
+          </Typography>
+  
         </Typography>
       </motion.div>
       <Box pt={4} pb={3}>
@@ -70,8 +70,7 @@ const BannerContent = () => {
           }}
         >
           <Typography variant="h5" fontWeight={300}>
-            Modernize comes with light & dark color skins, well designed dashboards, applications
-            and pages.
+            Platform Pelatihan Wawancara Terintegrasi Generative Artificial Intelligence dan Gesture Analysis.
           </Typography>
         </motion.div>
       </Box>
@@ -91,7 +90,7 @@ const BannerContent = () => {
           </StyledButton>
 
           <StyledButton variant="outlined" href="#demos">
-            Live Preview
+            Coba Gratis
           </StyledButton>
         </Stack>
       </motion.div>

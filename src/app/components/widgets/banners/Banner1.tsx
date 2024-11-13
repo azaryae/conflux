@@ -41,7 +41,7 @@ const Banner1 = () => {
                   Lihat riwayat keseluruhan latihan wawancara anda disini!
                 </Typography>
                 <Button variant="contained" color="secondary">
-                  Download
+                  Unduh
                 </Button>
               </Box>
             </Grid>
