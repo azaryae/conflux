@@ -10,8 +10,11 @@ import {
 import Image from "next/image";
 import ParentCard from "../../shared/ParentCard";
 import Transection from "./code/TransectionCode";
+import { useRouter } from "next/navigation";
 
 const Banner1 = () => {
+  const router = useRouter(); 
+
   return (
     <ParentCard title="History" codeModel={<Transection />}>
       <Card
@@ -40,8 +43,9 @@ const Banner1 = () => {
                 <Typography variant="subtitle1" color="textSecondary" my={2}>
                   Lihat riwayat keseluruhan latihan wawancara anda disini!
                 </Typography>
-                <Button variant="contained" color="secondary">
-                  Unduh
+                <Button variant="contained" color="secondary"
+                onClick={() => router.push("/riwayat")}>
+                  Lihat
                 </Button>
               </Box>
             </Grid>

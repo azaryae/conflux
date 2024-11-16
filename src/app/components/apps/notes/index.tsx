@@ -13,7 +13,7 @@ const NotesApp = () => {
 
   return (
     <>
-      {lgDown ? (
+      {/* {lgDown ? (
         <NoteSidebar
           isMobileSidebarOpen={isMobileSidebarOpen}
           onSidebarClose={() => setMobileSidebarOpen(false)}
@@ -23,7 +23,7 @@ const NotesApp = () => {
           isMobileSidebarOpen={true}
           onSidebarClose={() => setMobileSidebarOpen(false)}
         />
-      )}
+      )} */}
 
       <Box flexGrow={1}>
         <NoteContent

@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import logoIcon from '/public/images/logos/logoIcon.svg';
+import logoIcon from '/public/images/logos/logo32.png';
 import Image from 'next/image';
 
 const Footer = () => {
@@ -17,7 +17,7 @@ const Footer = () => {
             <Link target="_blank" href="https://adminmart.com/">
               <Typography color="textSecondary" component="span" display="inline">
                 {' '}
-                AdminMart
+                AI VERSE
               </Typography>{' '}
             </Link>
             .

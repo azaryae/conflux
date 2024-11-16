@@ -26,7 +26,6 @@ const NoteSidebar = ({ isMobileSidebarOpen, onSidebarClose }: NoteType) => {
       onClose={onSidebarClose}
       variant={lgUp ? 'persistent' : 'temporary'}
     >
-      <NoteList />
     </Drawer>
   );
 };

@@ -19,12 +19,12 @@ export default function Landingpage () {
     <PageContainer title="Landingpage" description="this is Landingpage">
       <LpHeader />
       <Banner />
-      <DemoSlider />
-      <Frameworks />
-      <Testimonial />
+      {/* <DemoSlider /> */}
+      {/* <Frameworks /> */}
+      {/* <Testimonial /> */}
       <Features />
-      <C2a />
-      <C2a2 />
+      {/* <C2a />
+      <C2a2 /> */}
       <Footer />
     </PageContainer>
   );

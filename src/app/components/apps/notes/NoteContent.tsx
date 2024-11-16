@@ -1,60 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, IconButton, Divider } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, Grid, Typography, IconButton, Divider, Paper } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
 
 const InterviewChat = () => {
-  const questions = [
+  const initialQuestions = [
     'Selamat datang di sesi wawancara. Bagaimana cara Anda mengatasi stres dalam pekerjaan?',
     'Apa motivasi utama Anda dalam melamar pekerjaan ini?',
     'Bagaimana Anda menghadapi tantangan dalam bekerja secara tim?',
     'Apa yang Anda lakukan untuk mengembangkan keterampilan Anda?',
     'Apa yang Anda lakukan ketika Anda tidak setuju dengan pendapat rekan kerja Anda?',
-    'Apa yang Anda lakukan ketika Anda tidak setuju dengan keputusan atasan Anda?',
-    'Bagaimana Anda menyeimbangkan pekerjaan dan kehidupan pribadi Anda?',
-    'Coba ceritakan tentang proyek terbaik yang pernah Anda kerjakan.',
-    'Apa yang Anda lakukan ketika Anda merasa tidak puas dengan pekerjaan Anda?',
-    'Jika Anda diterima di perusahaan ini, apa yang akan Anda lakukan dalam 30 hari pertama Anda?',
   ];
 
-  const [messages, setMessages] = useState([{ sender: 'ai', text: questions[0] }]);
+  const [remainingQuestions, setRemainingQuestions] = useState(initialQuestions);
+  const [currentQuestion, setCurrentQuestion] = useState(initialQuestions[0]);
+  const [messages, setMessages] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
-  const [transcript, setTranscript] = useState('');
   const [recognition, setRecognition] = useState(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const videoRef = useRef(null);
 
   useEffect(() => {
-    // Initialize speech recognition
     if ('webkitSpeechRecognition' in window) {
       const speechRecognition = new window.webkitSpeechRecognition();
       speechRecognition.continuous = false;
       speechRecognition.interimResults = false;
-      speechRecognition.lang = 'id-ID'; // Set language to Indonesian
+      speechRecognition.lang = 'id-ID';
 
       speechRecognition.onresult = (event) => {
         const text = event.results[0][0].transcript;
-        setTranscript(text);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { sender: 'user', text },
-        ]);
 
-        // Display the next question after a user response
+        setMessages([{ sender: 'user', text }]);
+
         setTimeout(() => {
-          setCurrentQuestionIndex((prevIndex) => {
-            const nextIndex = prevIndex + 1;
-            if (nextIndex < questions.length) {
-              const nextQuestion = questions[nextIndex];
-              setMessages((prevMessages) => [
-                ...prevMessages,
-                { sender: 'ai', text: nextQuestion },
-              ]);
-              // Synthesize the next question
+          setRemainingQuestions((prevQuestions) => {
+            const newQuestions = [...prevQuestions];
+            newQuestions.shift();
+            if (newQuestions.length > 0) {
+              const nextQuestion = newQuestions[0];
+              setCurrentQuestion(nextQuestion);
               speakText(nextQuestion);
+            } else {
+              setCurrentQuestion('Sesi selesai.');
             }
-            return nextIndex;
+            return newQuestions;
           });
-        }, 1000); // Delay before the next question
+
+          setMessages([]);
+        }, 1000);
       };
 
       speechRecognition.onend = () => {
@@ -66,8 +58,19 @@ const InterviewChat = () => {
       alert('Web Speech API is not supported in this browser.');
     }
 
-    // Speak the first question when component mounts
-    speakText(questions[0]);
+    speakText(initialQuestions[0]);
+
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        })
+        .catch((error) => {
+          console.error("Error accessing camera: ", error);
+        });
+    }
   }, []);
 
   const handleRecording = () => {
@@ -79,76 +82,120 @@ const InterviewChat = () => {
     setIsRecording(!isRecording);
   };
 
-  // Speech synthesis function
   const speakText = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'id-ID'; // Set language to Indonesian
+    utterance.lang = 'id-ID';
     window.speechSynthesis.speak(utterance);
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '80vh',
-        maxWidth: '100wh',
-        margin: 'auto',
-        p: 2,
-        border: '1px solid #e0e0e0',
-        borderRadius: '8px',
-      }}
-    >
-      <Typography variant="h6" align="center" gutterBottom>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h5" align="center" gutterBottom>
         Latihan Wawancara
       </Typography>
-      <Divider />
+      <Divider sx={{ mb: 3 }} />
 
-      {/* Chat Messages Section */}
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: 'auto',
-          mt: 2,
-          mb: 2,
-        }}
-      >
-        {messages.map((message, index) => (
-          <Box
-            key={index}
-            sx={{
-              display: 'flex',
-              justifyContent: message.sender === 'ai' ? 'flex-start' : 'flex-end',
-              mb: 2,
-            }}
-          >
-            <Box
-              sx={{
-                maxWidth: '70%',
-                p: 1.5,
-                borderRadius: 2,
-                backgroundColor: message.sender === 'ai' ? '#f0f0f0' : '#1976d2',
-                color: message.sender === 'ai' ? 'black' : 'white',
-                textAlign: message.sender === 'ai' ? 'left' : 'right',
-              }}
-            >
-              <Typography>{message.text}</Typography>
-            </Box>
-          </Box>
-        ))}
-      </Box>
+      <Grid container spacing={2} direction="column" alignItems="center">
+        {/* Kolom Kamera */}
+        <Grid item xs={12} sx={{ mb: 3 }}>
+        <video
+    ref={videoRef}
+    autoPlay
+    muted
+    style={{
+      objectFit: 'cover',
+      width: '400px',
+      height: '250px',
+      border: '1px solid #ccc', // Opsional: Tambahkan border untuk estetika
+      borderRadius: '4px', // Opsional: Tambahkan border-radius
+    }}
+  ></video>
+        </Grid>
 
-      {/* Voice Recording Button */}
-      <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
-        <IconButton color="primary" onClick={handleRecording}>
-          {isRecording ? <StopIcon /> : <MicIcon />}
-        </IconButton>
-        {isRecording && (
-          <Typography variant="caption" color="textSecondary" ml={1}>
-            Mendengarkan...
-          </Typography>
-        )}
-      </Box>
+        {/* Kolom Pertanyaan dan Jawaban */}
+        <Grid item xs={12}>
+          <Grid container spacing={2}>
+            {/* Kolom Pertanyaan */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                  width: '475px',
+                  height: '275px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  overflow: 'auto',
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Pertanyaan
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+                <Typography variant="body1" sx={{ mt: 2 }}>
+                  {currentQuestion}
+                </Typography>
+              </Paper>
+            </Grid>
+
+            {/* Kolom Jawaban */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                  width: '475px',
+                  height: '275px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}
+              >
+                <Typography variant="h6" gutterBottom>
+                  Jawaban
+                </Typography>
+                <Divider sx={{ mb: 2 }} />
+
+                <Box
+                  sx={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1,
+                  }}
+                >
+                  {messages.map((message, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        alignSelf: message.sender === 'ai' ? 'flex-start' : 'flex-end',
+                        maxWidth: '80%',
+                        p: 1.5,
+                        borderRadius: 2,
+                        backgroundColor: message.sender === 'ai' ? '#f0f0f0' : '#1976d2',
+                        color: message.sender === 'ai' ? 'black' : 'white',
+                      }}
+                    >
+                      <Typography>{message.text}</Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
+                  <IconButton color="primary" onClick={handleRecording}>
+                    {isRecording ? <StopIcon /> : <MicIcon />}
+                  </IconButton>
+                  {isRecording && (
+                    <Typography variant="caption" color="textSecondary" ml={1}>
+                      Mendengarkan...
+                    </Typography>
+                  )}
+                </Box>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
