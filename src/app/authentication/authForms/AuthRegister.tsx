@@ -2,18 +2,82 @@
 
 import { Box, Typography, Button, Divider, Stack, TextField } from "@mui/material";
 import Link from "next/link";
+import { z } from "zod";
+import toast from "react-hot-toast";
 import CustomFormLabel from "@/app/components/forms/theme-elements/CustomFormLabel";
 import AuthSocialButtons from "./AuthSocialButtons";
 import { useState } from "react";
 import { useForm } from "react-hook-form";  // Assuming you're using React Hook Form
+import { reset } from "@/store/counter/counterSlice";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+interface RegisterFormProps {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+}
+
+const schema = z.object({
+  name: z.string().min(4),
+  email: z.string().email({message: "Invalid email format"}),
+  password: z.string().min(8),
+  password_confirmation: z.string().min(8),
+}).refine(data => data.password === data.password_confirmation, {
+  message: "Password Confirmation doesn't match",
+  path: ["password_confirmation"],
+});
 
 const AuthRegister = ({ title, subtext, subtitle }: { title: string, subtext: string, subtitle: string }) => {
-  // Assuming React Hook Form for handling form state
-  const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const onSubmit = (data: RegisterFormProps) => {
-    console.log(data); // Handle form submission
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: "all",
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      password_confirmation: "",
+    },
+  });
+
+  const onSubmit = async (data: RegisterFormProps) => {
+    try {
+      let response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+  
+      if (response.ok) {
+        toast.success("Register berhasil, silahkan login");
+        setTimeout(() => {
+          window.location.assign("/authentication/login");
+          reset();
+        }, 1500);
+      } else if (response.status === 400) {
+        const data = await response.json(); // Tunggu parsing JSON
+        const errormessage = data.error;
+        toast.error(errormessage);
+      } else {
+        toast.error("Register gagal, silahkan coba lagi");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Terjadi kesalahan, silahkan coba lagi nanti.");
+    }
   };
+  
+
 
   return (
     <Box>
@@ -81,6 +145,18 @@ const AuthRegister = ({ title, subtext, subtitle }: { title: string, subtext: st
               {...register("password", { required: "Password is required" })}
               error={!!errors.password}
               helperText={errors.password?.message}
+            />
+
+            {/* confirmation password fiels */}
+            <CustomFormLabel htmlFor="password_confirmation">Confirm Password</CustomFormLabel>
+            <TextField
+              id="password_confirmation"
+              variant="outlined"
+              fullWidth
+              type="password"
+              {...register("password_confirmation", { required: "Password Confirmation is required" })}
+              error={!!errors.password_confirmation}
+              helperText={errors.password_confirmation?.message}
             />
           </Stack>
 

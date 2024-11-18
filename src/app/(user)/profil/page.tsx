@@ -21,6 +21,10 @@ import {
 } from "@tabler/icons-react";
 import BlankCard from "./shared/BlankCard";
 import ParentCard from "./shared/ParentCard";
+import { z } from "zod";
+import toast from "react-hot-toast";
+import { useForm } from "react-hook-form"; 
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const SocialIcons = [
   { name: "Facebook", icon: <IconBrandFacebook size="18" color="#1877F2" /> },
@@ -29,52 +33,115 @@ const SocialIcons = [
   { name: "Twitter", icon: <IconBrandTwitter size="18" color="#1C9CEA" /> },
 ];
 
+interface RegisterFormProps{
+  email: string;
+  no_hp: number;
+  alamat: string;
+  jenis_kelamin: string;
+  tempat_lahir: string;
+  tanggal_lahir: string;
+  jurusan: string;
+  pendidikan_terakhir: string;
+  tahun_lulus: number;
+  pengalaman_kerja: string;
+  minat: string;
+  keahlian: string;
+  organisasi: string;
+  hobi: string;
+  prestasi: string;
+
+}
+
+const schema = z.object({
+  email: z.string().email({message: "Invalid email format"}),
+  no_hp: z.string(),
+  alamat: z.string(),
+  jenis_kelamin: z.string(),
+  tempat_lahir: z.string(),
+  tanggal_lahir: z.string(),
+  jurusan: z.string(),
+  pendidikan_terakhir: z.string(),
+  tahun_lulus: z.string(),
+  pengalaman_kerja: z.string(),
+  minat: z.string(),
+  keahlian: z.string(),
+  organisasi: z.string(),
+  hobi: z.string(),
+  prestasi: z.string(),
+
+
+
+
+});
+
+
 const ProfilePage = () => {
   const theme = useTheme();
 
-  // State untuk data statis
-  // const [profileData, setProfileData] = useState({
-  //   name: "Nama Lengkap Pengguna",
-  //   email: "user.email@example.com",
-  //   phone: "+123 456 7890",
-  //   alamat: "Alamat Lengkap",
-  //   otherInfo: {
-  //     Jenis Kelamin: "Laki-laki",
-  //     Tempat Lahir: "Tempat Lahir",
-  //     Tanggal Lahir: "01-01-2000",
-  //     Jurusan: "S1 Teknik Informatika",
-  //     pendidikan terakhir: "S1",
-  //     Tahun Lulus: "2020",
-  //     Pengaaman Kerja
-  //     Minat: "Teknologi, Musik",
-  //     Keahlian: "Programming, Design",
-  //     Organisasi: "Himpunan Mahasiswa Teknik Informatika",
-  //     Hobi: "berenang",
-  //     Prestasi: "Juara 1 Lomba Desain 2020",
-  //   },
-  // });
+  
 
-  // Fungsi untuk menangani perubahan data
-  const handleChange = (field, value) => {
-    setProfileData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: "all",
+    defaultValues: {
+      email: "",
+      no_hp: "",
+      alamat: "",
+      jenis_kelamin: "",
+      tempat_lahir: "",
+      tanggal_lahir: "",
+      jurusan: "",
+      pendidikan_terakhir: "",
+      tahun_lulus: "",
+      pengalaman_kerja: "",
+      minat: "",
+      keahlian: "",
+      organisasi: "",
+      hobi: "",
+      prestasi: "",
 
-  const handleOtherInfoChange = (field, value) => {
-    setProfileData((prev) => ({
-      ...prev,
-      otherInfo: {
-        ...prev.otherInfo,
-        [field]: value,
-      },
-    }));
+    },
+  });
+
+  const onSubmit = async (data: RegisterFormProps) => {
+    try {
+      let response = await fetch('/api/profil', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        toast.success("Data berhasil disimpan");
+        setTimeout(() => {
+          window.location.assign("/profil");
+          reset();
+        }
+        , 1500);
+      } else if (response.status === 400) {
+        const data = await response.json(); // Tunggu parsing JSON
+        const errormessage = data.error;
+        toast.error(errormessage);
+      } else {
+        toast.error("Data gagal disimpan, silahkan coba lagi");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Terjadi kesalahan, silahkan coba lagi nanti.");
+    }
   };
 
   return (
-    <ParentCard title="Halaman Profil Pengguna">
-      <form>
+    
+    <Box>
+      <form onSubmit={handleSubmit(onSubmit as any)}>
         <Grid container spacing={3}>
           {/* Kolom 1 */}
           <Grid item xs={12} md={6}>
@@ -83,14 +150,14 @@ const ProfilePage = () => {
               <BlankCard>
                 <CardContent>
                   <Stack direction="column" alignItems="center" gap={2}>
-                    <Avatar
+                    {/* <Avatar
                       alt="User Avatar"
                       src="/images/profile/user-avatar.jpg"
                       sx={{ width: "120px", height: "120px" }}
-                    />
+                    /> */}
                     <Box textAlign="center">
                       <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                        {'profileData.name'}
+                        Nama Lengkap
                       </Typography>
                       <Typography
                         variant="subtitle1"
@@ -127,8 +194,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Email"
-                      value={'profileData.email'}
-                      onChange={(e) => handleChange("email", e.target.value)}
+                      id="email"
+                      type="email"
+                      {...register("email")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -137,18 +205,20 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="No HP"
-                      value={'profileData.phone'}
-                      onChange={(e) => handleChange("phone", e.target.value)}
+                      id="no_hp"
+                      type="number"
+                      {...register("no_hp")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
                       InputLabelProps={{ sx: { fontSize: "14px" } }}
                     />
-                                        <TextField
+                      <TextField
                       fullWidth
                       label="Alamat"
-                      value={"amban"}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="alamat"
+                      type="text"
+                      {...register("alamat")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -172,8 +242,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Jenis Kelamin"
-                      value={'profileData.email'}
-                      onChange={(e) => handleChange("email", e.target.value)}
+                      id="jenis_kelamin"
+                      type="text"
+                      {...register("jenis_kelamin")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -182,8 +253,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Tempat Lahir"
-                      value={'profileData.phone'}
-                      onChange={(e) => handleChange("phone", e.target.value)}
+                      id="tempat_lahir"
+                      type="text"
+                      {...register("tempat_lahir")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -192,8 +264,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Tanggal Lahir"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="tanggal_lahir"
+                      type="date"
+                      {...register("tanggal_lahir")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -202,8 +275,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Jurusan"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="jurusan"
+                      type="text"
+                      {...register("jurusan")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -212,8 +286,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Pendidikan Terakhir"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="pendidikan_terakhir"
+                      type="text"
+                      {...register("pendidikan_terakhir")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -222,8 +297,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Tahun Lulus"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="tahun_lulus"
+                      type="number"
+                      {...register("tahun_lulus")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -232,8 +308,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Pengalaman Kerja"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="pengalaman_kerja"
+                      type="text"
+                      {...register("pengalaman_kerja")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -242,8 +319,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Minat"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="minat"
+                      type="text"
+                      {...register("minat")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -252,8 +330,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Keahlian"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="keahlian"
+                      type="text"
+                      {...register("keahlian")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -262,8 +341,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Organisasi"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="organisasi"
+                      type="text"
+                      {...register("organisasi")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -272,8 +352,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Hobi"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="hobi"
+                      type="text"
+                      {...register("hobi")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -282,8 +363,9 @@ const ProfilePage = () => {
                     <TextField
                       fullWidth
                       label="Prestasi"
-                      value={'profileData.alamat'}
-                      onChange={(e) => handleChange("name", e.target.value)}
+                      id="prestasi"
+                      type="text"
+                      {...register("prestasi")}
                       InputProps={{
                         sx: { fontSize: "16px" },
                       }}
@@ -302,7 +384,8 @@ const ProfilePage = () => {
           </Button>
         </Box>
       </form>
-    </ParentCard>
+    </Box>
+
   );
 };
 

@@ -46,10 +46,9 @@ model Data_Diri {
   id Int @id @default(autoincrement())
   user_id Int
   user User @relation(fields: [user_id], references: [id])
-  nama String
   jenis_kelamin String
   tempat_lahir String
-  tanggal_lahir DateTime
+  tanggal_lahir String
   alamat String
   no_hp String
   email String
