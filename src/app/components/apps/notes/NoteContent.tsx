@@ -2,8 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, Grid, Typography, IconButton, Divider, Paper } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
+import { Button } from "@mui/material";
+import { useRouter } from "next/navigation";
+import Link from 'next/link';
 
 const InterviewChat = () => {
+
+
+
+  const router = useRouter(); 
+
   const initialQuestions = [
     'Selamat datang di sesi wawancara. Bagaimana cara Anda mengatasi stres dalam pekerjaan?',
     'Apa motivasi utama Anda dalam melamar pekerjaan ini?',
@@ -193,8 +201,22 @@ const InterviewChat = () => {
                 </Box>
               </Paper>
             </Grid>
+
           </Grid>
         </Grid>
+      </Grid>
+
+      <Grid>
+          <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+            <Link href="/riwayat/detail">
+            <Button variant="contained" color="primary">
+              Selesai
+            </Button>
+            </Link>
+
+          </Box>
+
+
       </Grid>
     </Box>
   );

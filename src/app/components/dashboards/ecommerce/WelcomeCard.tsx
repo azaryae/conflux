@@ -14,9 +14,11 @@ import {
 import { IconArrowUpRight } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation"; // Pastikan impor yang benar
+import { useSession } from "next-auth/react";
 
 const WelcomeCard = () => {
-  const router = useRouter(); // Definisikan router di sini
+  const router = useRouter(); // Definisikan router di sini\\
+  const {data: session} = useSession();
 
   return (
     <Card
@@ -48,7 +50,7 @@ const WelcomeCard = () => {
                   sx={{ width: 40, height: 40 }}
                 />
                 <Typography variant="h5" whiteSpace="nowrap">
-                  Selamat datang, Pengguna
+                  Selamat datang, {session?.user?.name}
                 </Typography>
               </Box>
 

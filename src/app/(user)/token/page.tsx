@@ -6,13 +6,29 @@ import C2a from '../../components/frontend-pages/shared/c2a';
 import Footer from '../../components/frontend-pages/shared/footer';
 import Banner from '../../components/frontend-pages/pricing/Banner';
 import ScrollToTop from '../../components/frontend-pages/shared/scroll-to-top';
+import Breadcrumb from "@/app/(DashboardLayout)/layout/shared/breadcrumb/Breadcrumb";
+
+
+const BCrumb = [
+    {
+      to: "/dashboard",
+      title: "Dashboard",
+    },
+    {
+      title: "Token",
+    },
+  ];
 
 const PricingPage = () => {
     return (
         <PageContainer title="Pricing" description="this is Pricing">
 
-            <HeaderAlert />
-            <HpHeader />
+                  {/* breadcrumb */}
+      <Breadcrumb title="Conflux AI" items={BCrumb} />
+      {/* end breadcrumb */}
+
+            {/* <HeaderAlert /> */}
+            {/* <HpHeader /> */}
             <Banner />
             <Pricing />
             <C2a />

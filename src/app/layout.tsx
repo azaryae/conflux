@@ -2,6 +2,9 @@ import React from "react";
 import { Providers } from "@/store/providers";
 import MyApp from "./app";
 import "./global.css";
+// import AuthProvider from "@/provider/auth.provider";
+import NextAuthSessionProvider from './providers/sessionProvider';
+
 
 
 export const metadata = {
@@ -17,9 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Providers>
-          <MyApp>{children}</MyApp>
-        </Providers>
+        {/* <AuthProvider> */}
+          <Providers>
+            <NextAuthSessionProvider>
+              <MyApp>{children}</MyApp>
+            </NextAuthSessionProvider>
+          </Providers>
+        {/* </AuthProvider> */}
       </body>
     </html>
   );

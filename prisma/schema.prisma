@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  password String
+  name  String
+  role String
+  token Int @default(0)
+  data_wawancara Data_Wawancara[]
+  data_diri Data_Diri[]
+  wawancara Wawancara[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Data_Wawancara {
+  id Int @id @default(autoincrement())
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+  nama_instansi String
+  posisi String
+  deskrpsi_instansi String
+  deskripsi_posisi String
+  tipe_pekerjaan String
+  pengalaman_minimal String
+  jenis_pertanyaan String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Data_Diri {
+  id Int @id @default(autoincrement())
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+  nama String
+  jenis_kelamin String
+  tempat_lahir String
+  tanggal_lahir DateTime
+  alamat String
+  no_hp String
+  email String
+  pendidikan_terakhir String
+  jurusan String
+  tahun_lulus String
+  pengalaman_kerja String?
+  minat String
+  keahlian String
+  organisasi String?
+  prestasi String?
+  hobi String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Wawancara {
+  id Int @id @default(autoincrement())
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+  pertanyaan String
+  jawaban String
+  saran String
+  gestur Gestur[]
+  ekspresi Ekspresi[]
+  durasi String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Gestur {
+  id Int @id @default(autoincrement())
+  wawancara_id Int
+  waawancara Wawancara @relation(fields: [wawancara_id], references: [id])
+  file String
+  deskripsi String
+  saran String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Ekspresi {
+  id Int @id @default(autoincrement())
+  wawancara_id Int
+  wawancara Wawancara @relation(fields: [wawancara_id], references: [id])
+  file String
+  deskripsi String
+  saran String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}

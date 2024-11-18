@@ -45,13 +45,14 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
     comments,
     category,
   } = blog;
+  
   return (
     <>
       <BlankCard className="hoverCard">
         <>
           <Typography
             component={NextLink}
-            href={`/frontend-pages/blog/${slug}`}
+            href={`/riwayat/${slug}`}
           >
             <CardMedia
               component="img"
@@ -86,7 +87,7 @@ const BlogCard = ({ blog }: { blog: Blog }) => {
                 color="inherit"
                 sx={{ textDecoration: "none" }}
                 component={NextLink}
-                href={`/frontend-pages/blog/${slug}`}
+                href={`/riwayat/${slug}`}
               >
                 {title}
               </Typography>
