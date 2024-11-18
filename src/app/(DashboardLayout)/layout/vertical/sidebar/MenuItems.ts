@@ -881,45 +881,6 @@ const Menuitems: MenuitemsType[] = [
       },
     ],
   },
-  {
-    id: uniqueId(),
-    title: "Disabled",
-    icon: IconBan,
-    href: "",
-    disabled: true,
-  },
-  {
-    id: uniqueId(),
-    title: "SubCaption",
-    subtitle: "This is the sutitle",
-    icon: IconStar,
-    href: "",
-  },
-
-  {
-    id: uniqueId(),
-    title: "Chip",
-    icon: IconAward,
-    href: "",
-    chip: "9",
-    chipColor: "primary",
-  },
-  {
-    id: uniqueId(),
-    title: "Outlined",
-    icon: IconMoodSmile,
-    href: "",
-    chip: "outline",
-    variant: "outlined",
-    chipColor: "primary",
-  },
-  {
-    id: uniqueId(),
-    title: "External Link",
-    external: true,
-    icon: IconStar,
-    href: "https://google.com",
-  },
 ];
 
 export default Menuitems;

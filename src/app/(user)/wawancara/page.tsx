@@ -33,7 +33,6 @@ const FormSeparator = () => {
     try {
       const response = await fetch('/api/wawancara', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
 
