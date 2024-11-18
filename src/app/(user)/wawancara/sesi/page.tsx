@@ -1,25 +1,43 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Grid, Typography, IconButton, Divider, Paper, TextField, Button } from '@mui/material';
+import { Box, Grid, Typography, IconButton, Divider, Paper, TextField, Button, CircularProgress } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
 import Link from 'next/link';
 
-const InterviewChat: React.FC = () => {
-  const initialQuestions = [
-    'Selamat datang di sesi wawancara. Bagaimana cara Anda mengatasi stres dalam pekerjaan?',
-    'Apa motivasi utama Anda dalam melamar pekerjaan ini?',
-    'Bagaimana Anda menghadapi tantangan dalam bekerja secara tim?',
-    'Apa yang Anda lakukan untuk mengembangkan keterampilan Anda?',
-    'Apa yang Anda lakukan ketika Anda tidak setuju dengan pendapat rekan kerja Anda?',
-  ];
+interface QuestionAnswer {
+  question: string;
+  answer: string;
+}
 
-  const [remainingQuestions, setRemainingQuestions] = useState(initialQuestions);
-  const [currentQuestion, setCurrentQuestion] = useState(initialQuestions[0]);
+const InterviewChat: React.FC = () => {
+  const [remainingQuestions, setRemainingQuestions] = useState<string[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<string>('');
   const [transcribedText, setTranscribedText] = useState<string>('');
   const [isRecording, setIsRecording] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
-  const [userAnswer, setUserAnswer] = useState('');
+  const [userAnswer, setUserAnswer] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch('/api/wawancara/sesi/generate');
+        const data = await response.json();
+        const questions = JSON.parse(data.result);
+        setCurrentQuestion(questions[0]);
+        setRemainingQuestions(questions.slice(1));
+        speakText(questions[0]);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window) {
@@ -50,13 +68,6 @@ const InterviewChat: React.FC = () => {
     } else {
       alert('Web Speech API is not supported in this browser.');
     }
-
-    speakText(initialQuestions[0]);
-
-    // Cleanup function
-    return () => {
-      stopRecognition();
-    };
   }, []);
 
   const handleRecording = () => {
@@ -85,11 +96,16 @@ const InterviewChat: React.FC = () => {
   };
 
   const handleNextQuestion = () => {
-    const newQuestions = [...remainingQuestions];
-    newQuestions.shift();
+    // Save the current question and answer to the state
+    setQuestionAnswers((prev) => [
+      ...prev,
+      { question: currentQuestion, answer: userAnswer },
+    ]);
 
-    if (newQuestions.length > 0) {
-      const nextQuestion = newQuestions[0];
+    const newQuestions = [...remainingQuestions];
+    const nextQuestion = newQuestions.shift();
+
+    if (nextQuestion) {
       setCurrentQuestion(nextQuestion);
       setRemainingQuestions(newQuestions);
       speakText(nextQuestion);
@@ -107,6 +123,27 @@ const InterviewChat: React.FC = () => {
     setUserAnswer(event.target.value);
   };
 
+  const submitInterview = async () => {
+    try {
+      const response = await fetch('/api/wawancara/sesi', {
+        method: 'POST',
+        body: JSON.stringify(questionAnswers),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        alert('Wawancara selesai. Terima kasih!');
+      } else {
+        alert('Terjadi kesalahan saat mengirim data wawancara.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Terjadi kesalahan saat mengirim data wawancara.');
+    }
+  }
+
   return (
     <Box sx={{ p: 3, width: '100%', height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h5" align="center" gutterBottom>
@@ -114,77 +151,82 @@ const InterviewChat: React.FC = () => {
       </Typography>
       <Divider sx={{ mb: 3 }} />
 
-      <Grid container spacing={2} direction="column" sx={{ flex: 1, overflow: 'auto' }}>
-        <Grid item>
-          <Typography variant="h4" align="center" sx={{ mb: 2 }}>
-            Pertanyaan
-          </Typography>
-        </Grid>
-
-        <Grid item>
-          <Paper elevation={3} sx={{ p: 2, mb: 2, textAlign: 'center' }}>
-            <Typography variant="h6">
-              {currentQuestion}
+      {isLoading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={2} direction="column" sx={{ flex: 1, overflow: 'auto' }}>
+          <Grid item>
+            <Typography variant="h4" align="center" sx={{ mb: 2 }}>
+              Pertanyaan
             </Typography>
-          </Paper>
-        </Grid>
+          </Grid>
 
-        <Grid item>
-          <Box display="flex" alignItems="center" justifyContent="center" gap={2}>
-            <IconButton
-              color={isRecording ? "error" : "primary"}
-              onClick={handleRecording}
-              sx={{
-                border: '2px solid',
-                padding: 2,
-                '&:hover': {
-                  backgroundColor: isRecording ? 'rgba(255,0,0,0.1)' : 'rgba(0,0,0,0.1)'
-                }
-              }}
-            >
-              {isRecording ? <StopIcon fontSize="large" /> : <MicIcon fontSize="large" />}
-            </IconButton>
-            {isRecording && (
-              <Typography variant="caption" color="textSecondary">
-                Merekam...
+          <Grid item>
+            <Paper elevation={3} sx={{ p: 2, mb: 2, textAlign: 'center' }}>
+              <Typography variant="h6">
+                {currentQuestion}
               </Typography>
-            )}
-          </Box>
-        </Grid>
+            </Paper>
+          </Grid>
 
-        <Grid item sx={{ width: '100%', mt: 2 }}>
-          <TextField
-            label="Jawaban Anda"
-            multiline
-            rows={4}
-            value={userAnswer}
-            onChange={handleUserAnswerChange}
-            variant="outlined"
-            fullWidth
-            placeholder="Tuliskan jawaban Anda di sini atau gunakan rekaman suara"
-          />
-        </Grid>
+          <Grid item>
+            <Box display="flex" alignItems="center" justifyContent="center" gap={2}>
+              <IconButton
+                color={isRecording ? "error" : "primary"}
+                onClick={handleRecording}
+                sx={{
+                  border: '2px solid',
+                  padding: 2,
+                  '&:hover': {
+                    backgroundColor: isRecording ? 'rgba(255,0,0,0.1)' : 'rgba(0,0,0,0.1)'
+                  }
+                }}
+              >
+                {isRecording ? <StopIcon fontSize="large" /> : <MicIcon fontSize="large" />}
+              </IconButton>
+              {isRecording && (
+                <Typography variant="caption" color="textSecondary">
+                  Merekam...
+                </Typography>
+              )}
+            </Box>
+          </Grid>
 
-        <Grid item sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 2 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleNextQuestion}
-            sx={{ flex: 1, mr: 1 }}
-          >
-            Pertanyaan Selanjutnya
-          </Button>
-          <Link href="/riwayat/detail" style={{ flex: 1 }}>
+          <Grid item sx={{ width: '100%', mt: 2 }}>
+            <TextField
+              label="Jawaban Anda"
+              multiline
+              rows={4}
+              value={userAnswer}
+              onChange={handleUserAnswerChange}
+              variant="outlined"
+              fullWidth
+              placeholder="Tuliskan jawaban Anda di sini atau gunakan rekaman suara"
+            />
+          </Grid>
+
+          <Grid item sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 2 }}>
             <Button
               variant="contained"
-              color="secondary"
-              sx={{ width: '100%' }}
+              color="primary"
+              onClick={handleNextQuestion}
+              sx={{ flex: 1, mr: 1 }}
             >
-              Selesai
+              Pertanyaan Selanjutnya
             </Button>
-          </Link>
+              <Button
+                variant="contained"
+                color="secondary"
+                sx={{ width: '100%' }}
+                onClick={submitInterview}
+              >
+                Selesai
+              </Button>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </Box>
   );
 };

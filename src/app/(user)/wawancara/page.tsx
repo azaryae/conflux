@@ -1,150 +1,186 @@
 'use client';
-import {
-  Grid,
-  Button,
-  Typography,
-  Divider,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from '@mui/material';
-import React from 'react';
-import CustomFormLabel from './theme-elements/CustomFormLabel';
-import CustomTextField from './theme-elements/CustomTextField';
-import { Stack } from '@mui/system';
-import { useRouter } from "next/navigation"; 
+
+import { Box, Button, TextField, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, CircularProgress, Grid } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+
+// Zod schema for validation
+const formSchema = z.object({
+  nama_instansi: z.string().min(1, "Nama instansi wajib diisi"),
+  deskripsi_instansi: z.string().min(1, "Deskripsi instansi wajib diisi"),
+  posisi: z.string().min(1, "Posisi wajib diisi"),
+  deskripsi_posisi: z.string().min(1, "Deskripsi posisi wajib diisi"),
+  tipe_pekerjaan: z.enum(["full-time", "part-time", "internship"]),
+  pengalaman_minimal: z.string().min(1, "Pengalaman minimal wajib diisi"),
+  questionType: z.enum(["teknikal", "non-teknikal"]),
+});
+
+type FormData = z.infer<typeof formSchema>;
 
 const FormSeparator = () => {
   const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+  });
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      const response = await fetch('/api/wawancara', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+
+      router.push('/wawancara/sesi');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div>
-      <Typography variant="h6" mb={3}>
-        Form Latihan Wawancara
-      </Typography>
-      <Grid container spacing={3}>
-        {/* Informasi Dasar */}
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="fs-instansi">Nama Instansi</CustomFormLabel>
-          <CustomTextField id="fs-instansi" placeholder="Nama instansi yang dituju" fullWidth />
-
-          <CustomFormLabel htmlFor="fs-values">Nilai-Nilai Perusahaan</CustomFormLabel>
-          <CustomTextField
-            id="fs-values"
-            placeholder="Contoh: Inovasi, Kolaborasi, Integritas"
-            multiline
-            rows={2}
-            fullWidth
-          />
-
-          <CustomFormLabel htmlFor="fs-deskripsi-instansi">Deskripsi Instansi</CustomFormLabel>
-          <CustomTextField
-            id="fs-deskripsi-instansi"
-            placeholder="Deskripsi singkat tentang instansi"
-            multiline
-            rows={4}
-            fullWidth
-          />
-
-
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="fs-posisi">Posisi yang Dilamar</CustomFormLabel>
-          <CustomTextField id="fs-posisi" placeholder="Posisi yang dilamar" fullWidth />
-
-          <CustomFormLabel htmlFor="fs-culture">Budaya Kerja Perusahaan</CustomFormLabel>
-          <CustomTextField
-            id="fs-culture"
-            placeholder="Contoh: Kerja Tim, Fleksibilitas, Target-Oriented"
-            multiline
-            rows={2}
-            fullWidth
-          />
-
-          <CustomFormLabel htmlFor="fs-deskripsi-posisi">Deskripsi Posisi</CustomFormLabel>
-          <CustomTextField
-            id="fs-deskripsi-posisi"
-            placeholder="Deskripsi singkat tentang posisi"
-            multiline
-            rows={4}
-            fullWidth
-          />
-
-
-        </Grid>
-
-        {/* Informasi Tambahan */}
-        <Grid item xs={12}>
-          <Divider sx={{ mx: '-24px' }} />
-          <Typography variant="h6" mt={2}>
-            Informasi Tambahan
-          </Typography>
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="fs-language">Bahasa yang Dikuasai</CustomFormLabel>
-          <CustomTextField
-            id="fs-language"
-            placeholder="Masukkan bahasa yang Anda kuasai"
-            fullWidth
-          />
-
-          <CustomFormLabel htmlFor="fs-education">Latar Belakang Pendidikan</CustomFormLabel>
-          <CustomTextField
-            id="fs-education"
-            placeholder="Contoh: S1 Teknik Informatika, Universitas XYZ"
-            fullWidth
-          />
-        </Grid>
-
-        <Grid item xs={12} sm={6}>
-          <CustomFormLabel htmlFor="fs-skills">Keahlian Utama</CustomFormLabel>
-          <CustomTextField
-            id="fs-skills"
-            placeholder="Contoh: Pemrograman, Desain Grafis, Manajemen"
-            fullWidth
-          />
-
-          <CustomFormLabel htmlFor="fs-experience">Pengalaman Kerja</CustomFormLabel>
-          <CustomTextField
-            id="fs-experience"
-            placeholder="Pengalaman kerja sebelumnya"
-            multiline
-            rows={3}
-            fullWidth
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <CustomFormLabel>Jenis Pertanyaan yang Diinginkan</CustomFormLabel>
-          <RadioGroup row>
-            <FormControlLabel
-              value="teknikal"
-              control={<Radio />}
-              label="Pertanyaan Teknikal"
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Box display="grid" gap={3}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            {/* Nama Instansi Field */}
+            <TextField
+              {...register('nama_instansi')}
+              label="Nama Instansi"
+              placeholder="Nama instansi yang dituju"
+              error={!!errors.nama_instansi}
+              helperText={errors.nama_instansi?.message}
+              disabled={isSubmitting}
+              fullWidth
             />
-            <FormControlLabel
-              value="non-teknikal"
-              control={<Radio />}
-              label="Pertanyaan Non-Teknikal"
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* Posisi Field */}
+            <TextField
+              {...register('posisi')}
+              label="Posisi yang Dilamar"
+              placeholder="Posisi yang dilamar"
+              error={!!errors.posisi}
+              helperText={errors.posisi?.message}
+              disabled={isSubmitting}
+              fullWidth
             />
-          </RadioGroup>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* Deskripsi Instansi Field */}
+            <TextField
+              {...register('deskripsi_instansi')}
+              label="Deskripsi Instansi"
+              placeholder="Deskripsi instansi"
+              error={!!errors.deskripsi_instansi}
+              helperText={errors.deskripsi_instansi?.message}
+              disabled={isSubmitting}
+              fullWidth
+              multiline
+              rows={4}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* Deskripsi Posisi Field */}
+            <TextField
+              {...register('deskripsi_posisi')}
+              label="Deskripsi Posisi"
+              placeholder="Deskripsi posisi"
+              error={!!errors.deskripsi_posisi}
+              helperText={errors.deskripsi_posisi?.message}
+              disabled={isSubmitting}
+              fullWidth
+              multiline
+              rows={4}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* Tipe Pekerjaan Radio Group */}
+            <FormControl component="fieldset" error={!!errors.tipe_pekerjaan}>
+              <FormLabel>Tipe Pekerjaan</FormLabel>
+              <RadioGroup row>
+                <FormControlLabel
+                  value="full-time"
+                  control={<Radio {...register('tipe_pekerjaan')} disabled={isSubmitting} />}
+                  label="Full-time"
+                />
+                <FormControlLabel
+                  value="part-time"
+                  control={<Radio {...register('tipe_pekerjaan')} disabled={isSubmitting} />}
+                  label="Part-time"
+                />
+                <FormControlLabel
+                  value="internship"
+                  control={<Radio {...register('tipe_pekerjaan')} disabled={isSubmitting} />}
+                  label="Internship"
+                />
+              </RadioGroup>
+              {errors.tipe_pekerjaan && <span style={{ color: '#d32f2f', marginTop: '0.5rem' }}>{errors.tipe_pekerjaan.message}</span>}
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* Pengalaman Minimal Field */}
+            <TextField
+              {...register('pengalaman_minimal')}
+              label="Pengalaman Minimal"
+              placeholder="Pengalaman minimal yang dibutuhkan"
+              error={!!errors.pengalaman_minimal}
+              helperText={errors.pengalaman_minimal?.message}
+              disabled={isSubmitting}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            {/* Question Type Radio Group */}
+            <FormControl component="fieldset" error={!!errors.questionType}>
+              <FormLabel>Jenis Pertanyaan yang Diinginkan</FormLabel>
+              <RadioGroup row>
+                <FormControlLabel
+                  value="teknikal"
+                  control={<Radio {...register('questionType')} disabled={isSubmitting} />}
+                  label="Pertanyaan Teknikal"
+                />
+                <FormControlLabel
+                  value="non-teknikal"
+                  control={<Radio {...register('questionType')} disabled={isSubmitting} />}
+                  label="Pertanyaan Non-Teknikal"
+                />
+              </RadioGroup>
+              {errors.questionType && <span style={{ color: '#d32f2f', marginTop: '0.5rem' }}>{errors.questionType.message}</span>}
+            </FormControl>
+          </Grid>
         </Grid>
 
-        <Grid item xs={12}>
-          <Stack direction="row" spacing={2}>
-            <Button variant="contained" color="primary"
-            onClick={() => router.push("/wawancara/sesi")}>
-              Kirim
-            </Button>
-            <Button variant="text" color="error"
-            onClick={() => router.push("/dashboard")}>
-              Kembali
-            </Button>
-          </Stack>
-        </Grid>
-      </Grid>
-    </div>
+        {/* Action Buttons */}
+        <Box display="flex" justifyContent="flex-end" gap={2}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => router.push('/dashboard')}
+            disabled={isSubmitting}
+          >
+            Kembali
+          </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={isSubmitting}
+            startIcon={isSubmitting && <CircularProgress size={20} />}
+          >
+            {isSubmitting ? 'Mengirim...' : 'Kirim'}
+          </Button>
+        </Box>
+      </Box>
+    </form>
   );
 };
 
