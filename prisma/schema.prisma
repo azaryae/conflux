@@ -32,8 +32,8 @@ model Data_Wawancara {
   user               User        @relation(fields: [user_id], references: [id])
   nama_instansi      String
   posisi             String
-  deskrpsi_instansi  String
-  deskripsi_posisi   String
+  deskrpsi_instansi  String      @db.Text
+  deskripsi_posisi   String      @db.Text
   tipe_pekerjaan     String
   pengalaman_minimal String
   jenis_pertanyaan   String
@@ -45,15 +45,15 @@ model Data_Wawancara {
 }
 
 model Data_Diri {
-  id Int @id @default(autoincrement())
-  user_id Int
-  user User @relation(fields: [user_id], references: [id])
-  jenis_kelamin String
-  tempat_lahir String
-  tanggal_lahir String
-  alamat String
-  no_hp String
-  email String
+  id                  Int      @id @default(autoincrement())
+  user_id             Int
+  user                User     @relation(fields: [user_id], references: [id])
+  jenis_kelamin       String
+  tempat_lahir        String
+  tanggal_lahir       String
+  alamat              String
+  no_hp               String
+  email               String
   pendidikan_terakhir String
   jurusan             String
   tahun_lulus         String
@@ -72,8 +72,8 @@ model Wawancara {
   data_wawancara_id Int
   data_wawancara    Data_Wawancara @relation(fields: [data_wawancara_id], references: [id])
   pertanyaan        String
-  jawaban           String
-  saran             String
+  jawaban           String         @db.Text
+  saran             String?        @db.Text
   durasi            String
   created_at        DateTime       @default(now())
   updated_at        DateTime       @updatedAt
@@ -85,7 +85,7 @@ model Gestur {
   data_wawancara    Data_Wawancara @relation(fields: [data_wawancara_id], references: [id])
   file              String
   deskripsi         String
-  saran             String
+  saran             String?
   created_at        DateTime       @default(now())
   updated_at        DateTime       @updatedAt
 }
@@ -96,7 +96,7 @@ model Ekspresi {
   data_wawancara    Data_Wawancara @relation(fields: [data_wawancara_id], references: [id])
   file              String
   deskripsi         String
-  saran             String
+  saran             String?
   created_at        DateTime       @default(now())
   updated_at        DateTime       @updatedAt
 }

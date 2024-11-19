@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
 			model: "gemini-1.5-flash",
 		});
 
-		const prompt = `generate pertanyaan interview/wawancara dalam bahasa indonesia sebanyak 10 pertanyaan berdasarkan pengguna ${JSON.stringify(
+		const prompt = `anda HR profesional generate pertanyaan interview/wawancara dalam bahasa indonesia sebanyak 10 pertanyaan berdasarkan pengguna ${JSON.stringify(
 			user
 		)} dan data wawancara ${JSON.stringify(
 			data_wawancara

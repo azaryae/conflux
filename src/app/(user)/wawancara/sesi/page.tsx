@@ -4,6 +4,8 @@ import { Box, Grid, Typography, IconButton, Divider, Paper, TextField, Button, C
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
 import Link from 'next/link';
+import Webcam from 'react-webcam';
+import toast from 'react-hot-toast';
 
 interface QuestionAnswer {
   question: string;
@@ -19,6 +21,7 @@ const InterviewChat: React.FC = () => {
   const [userAnswer, setUserAnswer] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [questionAnswers, setQuestionAnswers] = useState<QuestionAnswer[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -30,13 +33,16 @@ const InterviewChat: React.FC = () => {
         setRemainingQuestions(questions.slice(1));
         speakText(questions[0]);
       } catch (error) {
+        toast.error('Terjadi kesalahan saat mengambil pertanyaan wawancara.');
         console.error(error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchQuestions();
+    const debounceFetch = setTimeout(fetchQuestions, 5000);
+
+    return () => clearTimeout(debounceFetch);
   }, []);
 
   useEffect(() => {
@@ -125,6 +131,18 @@ const InterviewChat: React.FC = () => {
 
   const submitInterview = async () => {
     try {
+      if (!questionAnswers.length) {
+        alert('Tidak ada data wawancara yang disimpan.');
+        return;
+      }
+
+      setQuestionAnswers((prev) => [
+        ...prev,
+        { question: currentQuestion, answer: userAnswer },
+      ]);
+
+      setIsSubmitting(true);
+      console.log(questionAnswers);
       const response = await fetch('/api/wawancara/sesi', {
         method: 'POST',
         body: JSON.stringify(questionAnswers),
@@ -134,13 +152,18 @@ const InterviewChat: React.FC = () => {
       });
 
       if (response.ok) {
-        alert('Wawancara selesai. Terima kasih!');
+        const data = await response.json();
+        toast.success('Data wawancara berhasil dikirim.');
+        // Use the returned ID in the redirect
+        window.location.href = `/riwayat/${data.result}`;
       } else {
-        alert('Terjadi kesalahan saat mengirim data wawancara.');
+        toast.error('Terjadi kesalahan saat mengirim data wawancara.');
       }
     } catch (error) {
       console.error(error);
-      alert('Terjadi kesalahan saat mengirim data wawancara.');
+      toast.error('Terjadi kesalahan saat mengirim data wawancara.');
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -157,6 +180,20 @@ const InterviewChat: React.FC = () => {
         </Box>
       ) : (
         <Grid container spacing={2} direction="column" sx={{ flex: 1, overflow: 'auto' }}>
+          <Grid item>
+            <Webcam
+              audio={false}
+              height={200}
+              screenshotFormat="image/jpeg"
+              width="100%"
+              videoConstraints={{
+                width: 1280,
+                height: 720,
+                facingMode: "user"
+              }}
+            />
+          </Grid>
+
           <Grid item>
             <Typography variant="h4" align="center" sx={{ mb: 2 }}>
               Pertanyaan
@@ -216,14 +253,14 @@ const InterviewChat: React.FC = () => {
             >
               Pertanyaan Selanjutnya
             </Button>
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{ width: '100%' }}
-                onClick={submitInterview}
-              >
-                Selesai
-              </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={submitInterview}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? <CircularProgress size={24} /> : 'Selesai'}
+            </Button>
           </Grid>
         </Grid>
       )}
